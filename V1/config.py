@@ -4,9 +4,9 @@ import sys
 import random
 import pygame
 
-pygam.init()
+pygame.init()
 W, H = 1000, 700
-win = pygam.display.set_mode((W, H))
+win = pygame.display.set_mode((W, H))
 pygame.display.set_caption("version1_of_TVC_VTVL")
 
 WHITE = (240, 240, 240) # so tiring to look up to colour codes- if you want diff colours update here
@@ -43,12 +43,3 @@ COP_MIN = 4.5
 COP_MAX = 9.0 # yeah if the val goes above this its not even a rocket it must be some cube or smth 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-
-
-
-
-
-
-
-
