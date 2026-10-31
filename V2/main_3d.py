@@ -168,7 +168,39 @@ def main():
             
         keys = IsKeyDown
 
-        
+        if state == "boost":
+            active_fuel_mode = "ascent"
+            if ascent_fuel > 0:
+                if keys(KEY_W): th = min(100.0, th + 60.0 * dt)
+                elif keys(KEY_S): th = max(0.0, th - 60.0 * dt)
+                else: th = max(0.0, th - 15.0 * dt)
+
+                ascent_fuel = max(0.0, ascent_fuel - (th * 0.08) * dt)
+                if ascent_fuel <= 0:
+                    th = 0.0
+                    state = "coast"
+                    print("out of fuel- now juz hope that the laws of phy are kind to you as we are coastin (like life) on inertia")
+                else:
+                    th = 0.0
+                    state = "coast"
+
+                if keys(KEY_A): gim = max(-7.0, gim - 25.0 * dt)
+                elif keys(KEY_D): gim = min(7.0, gim + 25.0 * dt)
+                else: gim *= (0.85 ** (dt * 60.0))
+
+                thrust_vert = th * 0.3 * math.cos(math.radians(ang))
+                thrust_horiz = th * 0.3 * math.sin(math.radians(ang))
+
+                drag_v = -DRAG_COEFF * vel * abs(vel)
+                accel = thrust_vert - GRAVITY + drag_v
+                vel += accel * dt
+                alt += vel * dt
+
+                if alt > 0.0:
+                    h_vel += (thrust_horiz + (wind_eff - h_vel) * 1.5) * dt
+                if alt <= 0.0: alt = 0.0
+                
+
 
 
 
