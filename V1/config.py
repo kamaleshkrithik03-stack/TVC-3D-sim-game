@@ -40,6 +40,6 @@ GUST_MAX = 6.0
 COM_MIN = 3.0
 COM_MAX = 6.5
 COP_MIN = 4.5
-COP_MAX = 9.0 # yeah if the val goes above this its not even a rocket it must be some cube or smth 
+COP_MAX = 9.0 # yeah if the val goes above this its not even a rocket it must be some cube or smth what would create som much air resistance 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
