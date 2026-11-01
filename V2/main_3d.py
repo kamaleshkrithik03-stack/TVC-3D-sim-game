@@ -2,7 +2,7 @@ import sys
 import math
 import random
 from pyray import *
-from raylib import CAMERA_PERSPECTIVE
+from raylib import CAMERA_PERSPECTIVE, KEY_SPACE
 from config_3d import *
 from renderer_3d import load_main_texture as load_menu_texture
 
@@ -359,25 +359,45 @@ def main():
             for c in clouds:
                 draw_sphere(c["pos"], c["radius"], fade(WHITE, 0.6))
 
-            draw_cylinder(rocket_pos, BODY_RADIUS, BODY_RADIUS, BODY_HEIGHT, 16, RED)
-            nose_pos = Vector3(rocket_pos.x, rocket_pos.y + (BODY_HEIGHT / 2) + 0.5, rocket_pos.z)
-            draw_cylinder(nose_pos, 0.0, BODY_RADIUS, 1.0, 16, DARKGRAY)
 
+            landing_burn = is_key_down(KEY_SPACE) and descent_fuel > 0
+
+            rl_push_matrix()
+            rl_translatef(rocket_pos.x, rocket_pos.y, rocket_pos.z)
+            rl_rotatef(ang, 0.0, 0.0, 1.0)
+
+            draw_cylinder(Vector3(0.0, 0.0, 0.0), BODY_RADIUS, BODY_RADIUS, BODY_HEIGHT, 16, RED)
+
+            nose_pos = Vector3(0.0, (BODY_HEIGHT / 2) + 0.6, 0.0)
+            draw_cylinder(Vector3(0.0, 0.0, 0.0), BODY_RADIUS, BODY_RADIUS, BODY_HEIGHT, 16, RED)
+
+            base_y = -(BODY_HEIGHT / 2)
             if legs_deployed:
-                base_y = rocket_pos.y - (BODY_HEIGHT / 2)
-                draw_line_3d(Vector3(rocket_pos.x, base_y, rocket_pos.z), Vector3(rocket_pos.x - 0.8, base_y - 1.0, rocket_pos.z - 0.8), BLACK)
-                draw_line_3d(Vector3(rocket_pos.x, base_y, rocket_pos.z), Vector3(rocket_pos.x + 0.8, base_y - 1.0, rocket_pos.z - 0.8), BLACK)
-                draw_line_3d(Vector3(rocket_pos.x, base_y, rocket_pos.z), Vector3(rocket_pos.x - 0.8, base_y - 1.0, rocket_pos.z + 0.8), BLACK)
-                draw_line_3d(Vector3(rocket_pos.x, base_y, rocket_pos.z), Vector3(rocket_pos.x + 0.8, base_y - 1.0, rocket_pos.z + 0.8), BLACK)
+                draw_line_3d(Vector3(0.0, base_y, 0.0), Vector3(-0.6, base_y - 0.8, -0.6), BLACK)  # this if else was helped by AI cuz i couldnt get the coordinates right and also im soo dumb to forget abot the retracted legs view
+                draw_line_3d(Vector3(0.0, base_y, 0.0), Vector3(0.6, base_y - 0.8, -0.6), BLACK)
+                draw_line_3d(Vector3(0.0, base_y, 0.0), Vector3(-0.6, base_y - 0.8, 0.6), BLACK)
+                draw_line_3d(Vector3(0.0, base_y, 0.0), Vector3(0.6, base_y - 0.8, 0.6), BLACK)
+            else:
+                draw_line_3d(Vector3(-BODY_RADIUS, base_y, 0.0), Vector3(-BODY_RADIUS, base_y + BODY_HEIGHT, 0.0), BLACK)
+                draw_line_3d(Vector3(BODY_RADIUS, base_y, 0.0), Vector3(BODY_RADIUS, base_y + BODY_HEIGHT, 0.0), BLACK)
+                draw_line_3d(Vector3(0.0, base_y, -BODY_RADIUS), Vector3(0.0, base_y + BODY_HEIGHT, -BODY_RADIUS), BLACK)
+                draw_line_3d(Vector3(0.0, base_y, BODY_RADIUS), Vector3(0.0, base_y + BODY_HEIGHT, BODY_RADIUS), BLACK)
 
             cur_fuel = ascent_fuel if active_fuel_mode == "ascent" else descent_fuel
-            if th > 0 and cur_fuel > 0:
-                flame_pos = Vector3(rocket_pos.x, rocket_pos.y - (BODY_HEIGHT / 2) - 0.5, rocket_pos.z)
-                flame_radius = BODY_RADIUS * 0.6
-                flame_height = th * 0.05
-                draw_cylinder(flame_pos, flame_radius, flame_radius * 0.1, flame_height, 16, ORANGE)
-                draw_cylinder(flame_pos, flame_radius * 0.1, flame_radius * 0.05, flame_height * 1.5, 16, YELLOW)
+            if th > 0 and ascent_fuel > 0 and active_fuel_mode == "ascent":
+               flame_pos = Vector3(0.0, -(BODY_HEIGHT / 2) - 0.4, 0.0)  # again from this bit to line 401 is AI to help solve my prob 
+               flame_radius = BODY_RADIUS * 0.7
+               flame_height = th * 0.03
+               draw_cylinder(flame_pos, flame_radius, flame_radius * 0.1, flame_height, 16, ORANGE)
+               draw_cylinder(flame_pos, flame_radius * 0.1, flame_radius * 0.02, flame_height * 1.4, 16, YELLOW)
 
+            if landing_burn:
+                descent_fuel = max(0.0, descent_fuel - 15.0 * dt)
+                vel += 12.0 * dt
+                flame_pos = Vector3(0.0, -(BODY_HEIGHT / 2) - 0.3, 0.0)
+                draw_cylinder(flame_pos, BODY_RADIUS * 0.5, 0.01, 0.8, 16, BLUE)
+
+            rl_pop_matrix()
             end_mode_3d()
 
             if abs(ang) > TILT_LIMIT:
