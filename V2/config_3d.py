@@ -11,6 +11,10 @@ PITCH_DAMP = 0.4
 TILT_LIMIT = 30.0
 GUST_MAX = 6.0
 
+CHUTE_ALT = 50.0
+STEER_ACCEL = 5.0
+AERO_K = 0.1
+
 #rocket dimensions 
 BODY_HEIGHT = 2.5
 BODY_RADIUS = 0.25 #juz feels right ig
@@ -24,6 +28,3 @@ COP_MAX = 9.0
 DRAGGING_SENSITIVITY = 1.0
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-
-
