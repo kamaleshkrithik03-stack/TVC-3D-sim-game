@@ -12,7 +12,7 @@ also pyinstaller
 ```bash
 pip install pyinstaller
 ```
-How to play?
+## How to play?
 
 well its:
 -W, S for movement;
