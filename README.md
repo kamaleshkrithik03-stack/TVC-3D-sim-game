@@ -22,4 +22,6 @@ well its:
 -[O] for orbit
 -[Enter] for launch;
 
+## Simulation Preview
 
+![Model Rocket VTVL Simulation Preview](finally.JPG)
