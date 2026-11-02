@@ -15,10 +15,10 @@ pip install pyinstaller
 How to play?
 
 well its:
--W, S for movement
--A, D for tvc controlls( only one axis now unfortunately)
--L for landing legs
--Space for landing burn
--Enter for launch
+-W, S for movement;
+-A, D for tvc controlls( only one axis now unfortunately);
+-L for landing legs;
+-Space for landing burn;
+-Enter for launch;
 
 
