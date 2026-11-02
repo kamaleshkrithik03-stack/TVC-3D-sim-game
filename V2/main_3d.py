@@ -1,6 +1,7 @@
 import sys
 import math
 import random
+import pyray as rl
 from pyray import *
 from raylib import CAMERA_PERSPECTIVE, KEY_SPACE
 from config_3d import *
@@ -16,6 +17,7 @@ ORANGE = Color(255, 161, 0, 255)
 CYAN = Color(0, 158, 47, 255) 
 DARKGRAY = Color(80, 80, 80, 255)
 RAYWHITE = Color(245, 245, 245, 255)
+
 
 def main():
     init_window(SCREEN_WIDTH, SCREEN_HEIGHT, WINDOW_TITLE)
@@ -317,7 +319,7 @@ def main():
                 clear_background(DARKGRAY)
 
             draw_rectangle(100, 100, 800, 560, Color(0, 0, 0, 220))
-            draw_text(b"ok its the game config (3d version now)", 135, 120, 18, WHITE)
+            draw_text(b"ok its the game config (3d version now)", 135, 120, 18, RED)
 
             draw_text(bytes(f"mission level(I hope u chose the harder one cuz I DARE YOU): LEVEL {selected_level}", "utf-8"), 135, 170, 16, RED)
             draw_rectangle(135, 191, 300, 8, DARKGRAY)
@@ -335,7 +337,7 @@ def main():
             draw_rectangle(135, 371, 300, 8, DARKGRAY)
             draw_circle(135 + int(((wind_speed - (-20.0)) / 40.0) * 300), 375, 10, CYAN)
 
-            draw_text(bytes(f"target apogee(aim for the stars and fail MISERABLY): {target_apogee:.1f} m", "utf-8"), 135, 410, 16, YELLOW)
+            draw_text(bytes(f"target apogee(aim for the stars and fail MISERABLY): {target_apogee:.1f} m", "utf-8"), 135, 410, 16, RED)
             draw_rectangle(135, 431, 300, 8, DARKGRAY)
             draw_circle(135 + int(((target_apogee - 200.0) / 2800.0) * 300), 435, 10, YELLOW)
 
@@ -348,7 +350,7 @@ def main():
             draw_circle(135 + int(((cop_pos - COP_MIN) / (COP_MAX - COP_MIN)) * 300), 570, 10, CYAN)
 
             draw_text(b"press [enter] to launch", 135, 615, 18, GREEN)
-            draw_text(b"controls: youll figure it out but th eunusual ones are [l] for legs(ik you do i meant the rocket), [o] orbit(not sat orbit), [r] menu", 540, 230, 16, WHITE)
+            draw_text(b"controls:youllfigureitoutbuttheunusual ones are [l] for legs(ik you do i meant the rocket), [o] orbit(not sat orbit), [r] menu", 540, 230, 16, WHITE)
 
         else:
             begin_mode_3d(camera)
@@ -367,40 +369,57 @@ def main():
             rl_rotatef(ang, 0.0, 0.0, 1.0)
 
             draw_cylinder(Vector3(0.0, 0.0, 0.0), BODY_RADIUS, BODY_RADIUS, BODY_HEIGHT, 16, RED)
+            draw_cylinder(Vector3(0.0, BODY_HEIGHT, 0.0), 0.0, BODY_RADIUS, 1.2, 16, DARKGRAY)
 
-            nose_pos = Vector3(0.0, (BODY_HEIGHT / 2) + 0.6, 0.0)
-            draw_cylinder(Vector3(0.0, 0.0, 0.0), BODY_RADIUS, BODY_RADIUS, BODY_HEIGHT, 16, RED)
-
-            base_y = -(BODY_HEIGHT / 2)
             if legs_deployed:
-                draw_line_3d(Vector3(0.0, base_y, 0.0), Vector3(-0.6, base_y - 0.8, -0.6), BLACK)  # this if else was helped by AI cuz i couldnt get the coordinates right and also im soo dumb to forget abot the retracted legs view
-                draw_line_3d(Vector3(0.0, base_y, 0.0), Vector3(0.6, base_y - 0.8, -0.6), BLACK)
-                draw_line_3d(Vector3(0.0, base_y, 0.0), Vector3(-0.6, base_y - 0.8, 0.6), BLACK)
-                draw_line_3d(Vector3(0.0, base_y, 0.0), Vector3(0.6, base_y - 0.8, 0.6), BLACK)
+                draw_line_3d(Vector3(0.0, 0.0, 0.0), Vector3(-0.8, -1.2, -0.8), BLACK)
+                draw_line_3d(Vector3(0.0, 0.0, 0.0), Vector3(0.8, -1.2, -0.8), BLACK)
+                draw_line_3d(Vector3(0.0, 0.0, 0.0), Vector3(-0.8, -1.2, 0.8), BLACK)
+                draw_line_3d(Vector3(0.0, 0.0, 0.0), Vector3(0.8, -1.2, 0.8), BLACK)
             else:
-                draw_line_3d(Vector3(-BODY_RADIUS, base_y, 0.0), Vector3(-BODY_RADIUS, base_y + BODY_HEIGHT, 0.0), BLACK)
-                draw_line_3d(Vector3(BODY_RADIUS, base_y, 0.0), Vector3(BODY_RADIUS, base_y + BODY_HEIGHT, 0.0), BLACK)
-                draw_line_3d(Vector3(0.0, base_y, -BODY_RADIUS), Vector3(0.0, base_y + BODY_HEIGHT, -BODY_RADIUS), BLACK)
-                draw_line_3d(Vector3(0.0, base_y, BODY_RADIUS), Vector3(0.0, base_y + BODY_HEIGHT, BODY_RADIUS), BLACK)
+                draw_line_3d(Vector3(-BODY_RADIUS, 0.0, 0.0), Vector3(-BODY_RADIUS, BODY_HEIGHT, 0.0), BLACK)
+                draw_line_3d(Vector3(BODY_RADIUS, 0.0, 0.0), Vector3(BODY_RADIUS, BODY_HEIGHT, 0.0), BLACK)
+                draw_line_3d(Vector3(0.0, 0.0, -BODY_RADIUS), Vector3(0.0, BODY_HEIGHT, -BODY_RADIUS), BLACK)
+                draw_line_3d(Vector3(0.0, 0.0, BODY_RADIUS), Vector3(0.0, BODY_HEIGHT, BODY_RADIUS), BLACK)
 
             cur_fuel = ascent_fuel if active_fuel_mode == "ascent" else descent_fuel
             if th > 0 and ascent_fuel > 0 and active_fuel_mode == "ascent":
-               flame_pos = Vector3(0.0, -(BODY_HEIGHT / 2) - 0.4, 0.0)  # again from this bit to line 401 is AI to help solve my prob 
-               flame_radius = BODY_RADIUS * 0.7
-               flame_height = th * 0.03
-               draw_cylinder(flame_pos, flame_radius, flame_radius * 0.1, flame_height, 16, ORANGE)
-               draw_cylinder(flame_pos, flame_radius * 0.1, flame_radius * 0.02, flame_height * 1.4, 16, YELLOW)
+                flame_height = th * 0.03
+                draw_cylinder(Vector3(0.0, 0.0, 0.0), BODY_RADIUS * 0.7, BODY_RADIUS * 0.1, -flame_height, 16, ORANGE)
+                draw_cylinder(Vector3(0.0, -flame_height, 0.0), BODY_RADIUS * 0.1, BODY_RADIUS * 0.02, -flame_height * 0.4, 16, YELLOW)
 
             if landing_burn:
-                descent_fuel = max(0.0, descent_fuel - 15.0 * dt)
-                vel += 12.0 * dt
-                flame_pos = Vector3(0.0, -(BODY_HEIGHT / 2) - 0.3, 0.0)
-                draw_cylinder(flame_pos, BODY_RADIUS * 0.5, 0.01, 0.8, 16, BLUE)
+                active_fuel_mode = "descent"
+                if is_key_down(KEY_W): th = min(100.0, th + 60.0 * dt)
+                elif is_key_down(KEY_S): th = max(0.0, th - 60.0 * dt)
+
+                burn_power = max(20.0, th)
+                descent_fuel = max(0.0, descent_fuel - (burn_power * 0.08) * dt)
+                vel += (burn_power * 0.15) * dt
+
+                flame_len = (burn_power / 100.0) * 1.5
+                draw_cylinder(Vector3(0.0, 0.0, 0.0), BODY_RADIUS * 0.6, 0.01, -flame_len, 16, BLUE)
+            if state == "descent" and alt <= CHUTE_ALT:
+                chute_base_y = BODY_HEIGHT + 1.8
+                draw_cylinder(Vector3(0.0, chute_base_y, 0.0), BODY_RADIUS * 3.5, BODY_RADIUS * 4.0, 0.3, 16, RED) # Ai help from here to line 412
+                draw_cylinder(Vector3(0.0, chute_base_y + 0.3, 0.0), BODY_RADIUS * 2.5, BODY_RADIUS * 3.5, 0.4, 16, RED)
+                draw_cylinder(Vector3(0.0, chute_base_y + 0.7, 0.0), BODY_RADIUS * 0.8, BODY_RADIUS * 2.5, 0.5, 16, WHITE)
+                
+                nose_tip = Vector3(0.0, BODY_HEIGHT + 1.2, 0.0)
+                draw_line_3d(nose_tip, Vector3(-BODY_RADIUS * 3.5, chute_base_y, 0.0), BLACK)
+                draw_line_3d(nose_tip, Vector3(BODY_RADIUS * 3.5, chute_base_y, 0.0), BLACK)
+                draw_line_3d(nose_tip, Vector3(0.0, chute_base_y, -BODY_RADIUS * 3.5), BLACK)
+                draw_line_3d(nose_tip, Vector3(0.0, chute_base_y, BODY_RADIUS * 3.5), BLACK)
 
             rl_pop_matrix()
             end_mode_3d()
 
-            if abs(ang) > TILT_LIMIT:
+            if abs(ang) > TILT_LIMIT and state in ("boost", "coast", "descent"):
+                state = "crashed"
+                scored = True
+                score = 0.0
+                rating = "F"
+                print("mission failed- my goal is now achieved")
                 draw_rectangle(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, Color(255, 0, 0, 75))
 
             if show_graph and len(log) >= 2:
@@ -440,12 +459,12 @@ def main():
                 draw_text(b"TVC landing/parachute(for dummies)", 30, 25, 20, DARKBLUE)
                 phase_col = ORANGE if state != "landed" else GREEN
                 draw_text(bytes(f"flight phase: {state.upper()}", "utf-8"), 30, 60, 16, phase_col)
-                draw_text(bytes(f"altitude: {alt:.1f} m", "utf-8"), 30, 85, 16, WHITE)
-                draw_text(bytes(f"vertical velocity(better be fast like a rocket): {vel:.1f} m/s", "utf-8"), 30, 110, 16, WHITE)
+                draw_text(bytes(f"altitude: {alt:.1f} m", "utf-8"), 30, 85, 16, RED)
+                draw_text(bytes(f"vertical velocity(better be fast like a rocket): {vel:.1f} m/s", "utf-8"), 30, 110, 16, RED)
 
                 fuel_col = BLUE if cur_fuel > 20 else RED
                 draw_text(bytes(f"fuel remaining: {cur_fuel:.1f} kg", "utf-8"), 30, 135, 16, fuel_col)
-                draw_text(bytes(f"max altitude: {max_alt:.1f} m", "utf-8"), 30, 160, 16, YELLOW)
+                draw_text(bytes(f"max altitude: {max_alt:.1f} m", "utf-8"), 30, 160, 16, CYAN)
                 draw_text(bytes(f"wind: {wind_eff:.1f} m/s", "utf-8"), 30, 185, 16, CYAN)
 
                 tilt_col = GREEN if abs(ang) < TILT_LIMIT else RED
