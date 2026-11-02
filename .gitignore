@@ -1,5 +1,7 @@
-# Ignore python cache files in V2 or anywhere else
+# Ignore Pycache and PyInstaller build/dist folders
 V2/__pycache__/
 **/__pycache__/
+V2/build/
+V2/dist/
 *.py[cod]
 *$py.class
