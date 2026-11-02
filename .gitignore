@@ -1,4 +1,5 @@
-# Ignore Python cache files everywhere in the repo
+# Ignore python cache files in V2 or anywhere else
+V2/__pycache__/
 **/__pycache__/
 *.py[cod]
 *$py.class
